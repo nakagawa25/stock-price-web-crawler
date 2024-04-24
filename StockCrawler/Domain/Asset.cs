@@ -2,7 +2,7 @@
 {
     public class Asset
     {
-        public string Ticker { get; set; }
+        public string Ticker { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public Type Type { get; set; }
     }

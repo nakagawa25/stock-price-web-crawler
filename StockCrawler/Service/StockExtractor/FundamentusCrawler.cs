@@ -10,10 +10,22 @@ namespace StockCrawler.Service.StockExtractor
 
         public FundamentusCrawler()
         {
-            var options = new ChromeOptions();
-            options.AddArgument("headless");
+            var chromeDriverService = ChromeDriverService.CreateDefaultService();
+            chromeDriverService.HideCommandPromptWindow = true;
 
-            _driver = new ChromeDriver();
+            var options = new ChromeOptions();
+            options.AddArguments(
+                "--headless", 
+                "--no-sandbox", 
+                "--disable-web-security", 
+                "--disable-gpu", 
+                "--incognito", 
+                "--proxy-bypass-list=*", 
+                "--proxy-server='direct://'", 
+                "--log-level=3", 
+                "--hide-scrollbars");
+
+            _driver = new ChromeDriver(chromeDriverService, options);
         }
 
         public List<Asset> GetFIIs()
