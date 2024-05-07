@@ -4,11 +4,11 @@ using StockCrawler.Domain;
 
 namespace StockCrawler.Service.StockExtractor
 {
-    public class FundamentusCrawler
+    internal class FundamentusCrawler
     {
         private readonly IWebDriver _driver;
 
-        public FundamentusCrawler()
+        internal FundamentusCrawler()
         {
             var chromeDriverService = ChromeDriverService.CreateDefaultService();
             chromeDriverService.HideCommandPromptWindow = true;
@@ -28,7 +28,7 @@ namespace StockCrawler.Service.StockExtractor
             _driver = new ChromeDriver(chromeDriverService, options);
         }
 
-        public List<Asset> GetFIIs()
+        internal List<Asset> GetFIIs()
         {
             var assets = GetAssetBrazilBase
                 (
@@ -40,7 +40,7 @@ namespace StockCrawler.Service.StockExtractor
             return assets;
         }
 
-        public List<Asset> GetAcoes()
+        internal List<Asset> GetAcoes()
         {
             var assets = GetAssetBrazilBase
                 (

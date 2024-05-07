@@ -50,9 +50,18 @@
                 "BTAL11",
                 "RZTR11"
             };
+
+            Stocks = new List<string>()
+            {
+                "CAT",
+                "MDLZ",
+                "MCD",
+                "MSFT"
+            };
         }
 
         public List<string> Acoes { get; private set; }
         public List<string> FIIs { get; private set; }
+        public List<string> Stocks { get; private set; }
     }
 }

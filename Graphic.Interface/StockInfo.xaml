@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="StockInfo" Height="870" Width="500">
     <Grid>
-        <Button Name="btnGetAssets" Content="Obter cotações atuais" Margin="125,756,125,47" Click="btnGetAssets_Click"/>
+        <Button Name="btnGetAssets" Content="Obter cotações atuais" Margin="25,756,275,47" Click="btnGetAssets_Click"/>
         <DataGrid Name="dgAssets" Width="450" Margin="25,21,25,133" AutoGenerateColumns="False" CanUserAddRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Ticker" Binding="{Binding Ticker}" Width="150" IsReadOnly="True"/>
@@ -15,5 +15,6 @@
                 <DataGridTextColumn Header="Tipo de Ativo" Binding="{Binding Type}" Width="150" IsReadOnly="True"/>
             </DataGrid.Columns>
         </DataGrid>
+        <Button x:Name="btnGetUSAAssets" Content="Get Stock Price" Margin="275,756,25,47" Click="btnGetUSAAssets_Click"/>
     </Grid>
 </Window>
