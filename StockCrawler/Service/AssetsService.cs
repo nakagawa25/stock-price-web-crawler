@@ -7,13 +7,13 @@ namespace StockCrawler.Service
     {
         private readonly WatchList _watchList;
         private readonly FundamentusCrawler _webCrawler;
-        private readonly YahooFinanceCrawler _marketWatchCrawler;
+        private readonly YahooFinanceCrawler _yahooFinanceCrawler;
 
         public AssetsService()
         {
             _watchList = new WatchList();
             _webCrawler = new FundamentusCrawler();
-            _marketWatchCrawler = new YahooFinanceCrawler();
+            _yahooFinanceCrawler = new YahooFinanceCrawler();
         }
 
         public List<Asset> GetBrazilianWalletAssets()
@@ -36,7 +36,7 @@ namespace StockCrawler.Service
         public List<Asset> GetUSAWalletAssets()
         {
             var watchList = _watchList.Stocks;
-            var allStocks = _marketWatchCrawler.GetStocks();
+            var allStocks = _yahooFinanceCrawler.GetAllStocks();
 
             var walletAssets = allStocks
                 .Where(x => watchList.Contains(x.Ticker))
@@ -45,6 +45,19 @@ namespace StockCrawler.Service
 
             //return walletAssets;
             return allStocks;
+        }
+
+        public List<AssetInformation> GetStocksInformation()
+        {
+            var assets = new List<AssetInformation>();
+            var watchList = _watchList.Stocks;
+            foreach (var asset in watchList)
+            {
+                var assetInformation = _yahooFinanceCrawler.GetStockInformation(asset);
+                assets.Add(assetInformation);
+            }
+
+            return assets;
         }
     }
 }

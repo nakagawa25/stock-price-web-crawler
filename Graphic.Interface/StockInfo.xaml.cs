@@ -39,7 +39,10 @@ namespace Graphic.Interface
             try
             {
                 btnGetUSAAssets.IsEnabled = false;
-                var assets = await Task.Run(() => _assetsService.GetUSAWalletAssets());
+                //var assets = await Task.Run(() => _assetsService.GetUSAWalletAssets());
+
+                var assets = await Task.Run(() => _assetsService.GetStocksInformation());
+
                 dgAssets.ItemsSource = assets;
             }
             catch (Exception ex)
