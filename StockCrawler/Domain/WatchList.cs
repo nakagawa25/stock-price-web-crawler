@@ -53,15 +53,44 @@
 
             Stocks = new List<string>()
             {
-                "CAT",
-                "MDLZ",
+                "GIS",
+                "JNJ",
+                "JPM",
+                "KO",
                 "MCD",
-                "MSFT"
+                "MMM",
+                "CL",
+                "MSFT",
+                "PEP",
+                "PG",
+                "ABT",
+                "CAT",
+                "DIS",
+                "MDLZ",
+                "EQIX",
+                "O",
+                "PLD",
+                "PSA",
+                "AVB",
+                "SLG",
+                "ARE"
+            };
+
+            ETFs = new List<string>()
+            {
+                "VT",
+                "HDV",
+                "NOBL",
+                "PEY",
+                "IDV",
+                "FNDE",
+                "IAU"
             };
         }
 
         public List<string> Acoes { get; private set; }
         public List<string> FIIs { get; private set; }
         public List<string> Stocks { get; private set; }
+        public List<string> ETFs { get; private set; }
     }
 }

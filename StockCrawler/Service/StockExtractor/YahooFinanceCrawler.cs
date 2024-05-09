@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using StockCrawler.Domain;
+using StockCrawler.Service.Utils;
 using System.Globalization;
 
 namespace StockCrawler.Service.StockExtractor
@@ -8,6 +9,7 @@ namespace StockCrawler.Service.StockExtractor
     internal class YahooFinanceCrawler
     {
         private readonly IWebDriver _driver;
+        private readonly WebScrappingTools _tools;
 
         internal YahooFinanceCrawler()
         {
@@ -27,6 +29,7 @@ namespace StockCrawler.Service.StockExtractor
                 "--hide-scrollbars");
 
             _driver = new ChromeDriver(chromeDriverService, options);
+            _tools = new WebScrappingTools(_driver);
         }
 
         internal List<Asset> GetAllStocks()
@@ -34,10 +37,10 @@ namespace StockCrawler.Service.StockExtractor
             _driver.Navigate().GoToUrl("https://finance.yahoo.com/screener/new/");
             Thread.Sleep(1000);
 
-            ClickButtonAndSleep("//*[@id=\"screener-criteria\"]/div[2]/div[1]/div[1]/div[2]/div/div[2]/div/button[4]", 300);
-            ClickButtonAndSleep("//*[@id=\"screener-criteria\"]/div[2]/div[1]/div[1]/div[2]/div/div[2]/div/button[3]", 300);
-            ClickButtonAndSleep("//*[@id=\"screener-criteria\"]/div[2]/div[1]/div[1]/div[2]/div/div[2]/div/button[2]", 1000);
-            ClickButtonAndSleep("//*[@id=\"screener-criteria\"]/div[2]/div[1]/div[3]/button[1]", 3000);
+            _tools.ClickButtonAndSleep("//*[@id=\"screener-criteria\"]/div[2]/div[1]/div[1]/div[2]/div/div[2]/div/button[4]", 300);
+            _tools.ClickButtonAndSleep("//*[@id=\"screener-criteria\"]/div[2]/div[1]/div[1]/div[2]/div/div[2]/div/button[3]", 300);
+            _tools.ClickButtonAndSleep("//*[@id=\"screener-criteria\"]/div[2]/div[1]/div[1]/div[2]/div/div[2]/div/button[2]", 1000);
+            _tools.ClickButtonAndSleep("//*[@id=\"screener-criteria\"]/div[2]/div[1]/div[3]/button[1]", 3000);
             
             var assets = new List<Asset>();
             var nextPage = true;
@@ -72,31 +75,13 @@ namespace StockCrawler.Service.StockExtractor
             Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
             Thread.Sleep(1000);
 
-            var dividendsText = GetTextFromWebElement("//*[@id=\"nimbus-app\"]/section/section/section/article/div[2]/ul/li[14]/span[2]");
+            var dividendsText = _tools.GetTextFromWebElement("//*[@id=\"nimbus-app\"]/section/section/section/article/div[2]/ul/li[14]/span[2]");
             dividendsText = dividendsText.Substring(0, dividendsText.IndexOf("("));
             asset.Dividend = decimal.TryParse(dividendsText, out var dividend) ? dividend : 0;
-            asset.Price = GetDecimalValueFromWebElement("//*[@id=\"nimbus-app\"]/section/section/section/article/section[1]/div[2]/div[1]/section/div/section/div[1]/fin-streamer[1]/span");
+            asset.Price = _tools.GetDecimalValueFromWebElement("//*[@id=\"nimbus-app\"]/section/section/section/article/section[1]/div[2]/div[1]/section/div/section/div[1]/fin-streamer[1]/span");
             asset.Ticker = ticker;
 
             return asset;
-        }
-
-        private string GetTextFromWebElement(string xPath)
-        {
-            var text = _driver.FindElement(By.XPath(xPath)).Text;
-            return string.IsNullOrWhiteSpace(text) ? string.Empty : text;
-        }
-
-        private decimal GetDecimalValueFromWebElement(string xPath)
-        {
-            var text = _driver.FindElement(By.XPath(xPath)).Text;
-            return decimal.TryParse(text, out var decimalValue) ? decimalValue : 0;
-        }
-
-        private void ClickButtonAndSleep(string buttonXPath, int sleepTime)
-        {
-            _driver.FindElement(By.XPath(buttonXPath)).Click();
-            Thread.Sleep(sleepTime);
         }
     }
 }

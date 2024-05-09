@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using StockCrawler.Domain;
+using StockCrawler.Service.Utils;
 
 namespace StockCrawler.Service.StockExtractor
 {

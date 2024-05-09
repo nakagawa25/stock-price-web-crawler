@@ -2,7 +2,7 @@
 using StockCrawler.Domain;
 using System.Globalization;
 
-namespace StockCrawler.Service.StockExtractor
+namespace StockCrawler.Service.Utils
 {
     public static class Mappers
     {
