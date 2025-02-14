@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StockCrawler", "StockCrawle
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLIAplication", "CLIAplication\CLIAplication.csproj", "{AD7E0681-FB71-4838-B81D-5DC22EDAFBC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Graphic.Interface", "Graphic.Interface\Graphic.Interface.csproj", "{E6B32655-7FA9-4421-AC24-83FCA9C5004C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Graphic.Interface", "Graphic.Interface\Graphic.Interface.csproj", "{E6B32655-7FA9-4421-AC24-83FCA9C5004C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

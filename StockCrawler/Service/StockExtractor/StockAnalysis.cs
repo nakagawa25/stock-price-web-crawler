@@ -8,17 +8,17 @@ namespace StockCrawler.Service.StockExtractor
 {
     internal class StockAnalysis
     {
-        private readonly IWebDriver _driver;
-        private readonly WebScrappingTools _tools;
+        private IWebDriver _driver = null!;
+        private WebScrappingTools _tools = null!;
 
-        internal StockAnalysis()
+        internal void InitWebDriver()
         {
             var chromeDriverService = ChromeDriverService.CreateDefaultService();
             chromeDriverService.HideCommandPromptWindow = true;
 
             var options = new ChromeOptions();
             options.AddArguments(
-                "--headless",
+                "--headless=new",
                 "--no-sandbox",
                 "--disable-web-security",
                 "--disable-gpu",
@@ -30,6 +30,11 @@ namespace StockCrawler.Service.StockExtractor
 
             _driver = new ChromeDriver(chromeDriverService, options);
             _tools = new WebScrappingTools(_driver);
+        }
+
+        internal void DisposeWebDriver()
+        {
+            _driver?.Dispose();
         }
 
         internal AssetInformation GetETFInformation(string ticker)

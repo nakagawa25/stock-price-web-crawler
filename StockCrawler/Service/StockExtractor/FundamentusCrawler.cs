@@ -7,26 +7,33 @@ namespace StockCrawler.Service.StockExtractor
 {
     internal class FundamentusCrawler
     {
-        private readonly IWebDriver _driver;
+        private IWebDriver _driver = null!;
 
-        internal FundamentusCrawler()
+        internal void InitWebDriver()
         {
             var chromeDriverService = ChromeDriverService.CreateDefaultService();
             chromeDriverService.HideCommandPromptWindow = true;
+            chromeDriverService.SuppressInitialDiagnosticInformation = true;
 
             var options = new ChromeOptions();
             options.AddArguments(
-                "--headless", 
-                "--no-sandbox", 
-                "--disable-web-security", 
-                "--disable-gpu", 
-                "--incognito", 
-                "--proxy-bypass-list=*", 
-                "--proxy-server='direct://'", 
-                "--log-level=3", 
+                "--headless=new",
+                "--no-sandbox",
+                "--disable-web-security",
+                "--disable-gpu",
+                "--incognito",
+                "--proxy-bypass-list=*",
+                "--proxy-server='direct://'",
+                "--log-level=3",
                 "--hide-scrollbars");
 
+
             _driver = new ChromeDriver(chromeDriverService, options);
+        }
+
+        internal void DisposeWebDriver() 
+        {  
+            _driver?.Dispose();
         }
 
         internal List<Asset> GetFIIs()
@@ -66,7 +73,7 @@ namespace StockCrawler.Service.StockExtractor
                 var assetsList = assetsTable.FindElements(By.TagName("tr"));
 
                 foreach (var asset in assetsList)
-                    assets.Add(MapToAsset(asset));         
+                    assets.Add(MapToAsset(asset));
             }
 
             return assets;

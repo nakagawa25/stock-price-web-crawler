@@ -20,8 +20,10 @@ namespace StockCrawler.Service
 
         public List<Asset> GetBrazilianWalletAssets()
         {
+            _webCrawler.InitWebDriver();
             var allAcoes = _webCrawler.GetAcoes();
             var allFIIs = _webCrawler.GetFIIs();
+            _webCrawler.DisposeWebDriver();
             allAcoes.AddRange(allFIIs);
 
             var watchList = _watchList.Acoes;
@@ -53,19 +55,23 @@ namespace StockCrawler.Service
         {
             var assets = new List<AssetInformation>();
 
+            _yahooFinanceCrawler.InitWebDriver();
             var stocksList = _watchList.Stocks;
             foreach (var stock in stocksList)
             {
                 var asset = _yahooFinanceCrawler.GetStockInformation(stock);
                 assets.Add(asset);
             }
+            _yahooFinanceCrawler.DisposeWebDriver();
 
+            _stockAnalysis.InitWebDriver();
             var etfList = _watchList.ETFs;
             foreach (var etf in etfList)
             {
                 var asset = _stockAnalysis.GetETFInformation(etf);
                 assets.Add(asset);
             }
+            _stockAnalysis.DisposeWebDriver();
 
             return assets;
         }

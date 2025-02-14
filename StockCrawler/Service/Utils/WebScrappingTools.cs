@@ -27,5 +27,15 @@ namespace StockCrawler.Service.Utils
             _driver.FindElement(By.XPath(buttonXPath)).Click();
             Thread.Sleep(sleepTime);
         }
+
+        internal static decimal CalculateDividendValueByYield(decimal price, decimal dividendYeld)
+        {
+            if (price <= 0 || dividendYeld <= 0)
+                return 0;
+
+            var dividend = (price * (dividendYeld / 100)) / 12;
+
+            return dividend;
+        }
     }
 }

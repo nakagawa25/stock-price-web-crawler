@@ -13,6 +13,7 @@
                 "BBDC3",
                 "BBSE3",
                 "PSSA3",
+                "TOTS3",
                 "VIVT3",
                 "CAML3",
                 "ABEV3",
@@ -44,6 +45,7 @@
                 "BTLG11",
                 "KNRI11",
                 "HGRE11",
+                "PVBI11",
                 "ALZR11",
                 "HGRU11",
                 "RBVA11",
@@ -67,13 +69,20 @@
                 "CAT",
                 "DIS",
                 "MDLZ",
+                "VZ",
                 "EQIX",
                 "O",
                 "PLD",
                 "PSA",
                 "AVB",
                 "SLG",
-                "ARE"
+                "ARE",
+                "AMT",
+                "VICI",
+                "ADC",
+                "WELL",
+                "STAG",
+                "NNN"
             };
 
             ETFs = new List<string>()

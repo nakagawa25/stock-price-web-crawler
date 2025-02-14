@@ -8,17 +8,17 @@ namespace StockCrawler.Service.StockExtractor
 {
     internal class YahooFinanceCrawler
     {
-        private readonly IWebDriver _driver;
-        private readonly WebScrappingTools _tools;
+        private IWebDriver _driver = null!;
+        private WebScrappingTools _tools = null!;
 
-        internal YahooFinanceCrawler()
+        internal void InitWebDriver()
         {
             var chromeDriverService = ChromeDriverService.CreateDefaultService();
             chromeDriverService.HideCommandPromptWindow = true;
 
             var options = new ChromeOptions();
             options.AddArguments(
-                "--headless",
+                "--headless=new",
                 "--no-sandbox",
                 "--disable-web-security",
                 "--disable-gpu",
@@ -30,6 +30,11 @@ namespace StockCrawler.Service.StockExtractor
 
             _driver = new ChromeDriver(chromeDriverService, options);
             _tools = new WebScrappingTools(_driver);
+        }
+
+        internal void DisposeWebDriver()
+        {
+            _driver?.Dispose();
         }
 
         internal List<Asset> GetAllStocks()
@@ -70,18 +75,59 @@ namespace StockCrawler.Service.StockExtractor
 
         internal AssetInformation GetStockInformation(string ticker)
         {
-            var asset = new AssetInformation();
-            _driver.Navigate().GoToUrl(string.Concat("https://finance.yahoo.com/quote/", ticker));
-            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
-            Thread.Sleep(1000);
+            try
+            {
+                var asset = new AssetInformation();
+                _driver.Navigate().GoToUrl(string.Concat("https://finance.yahoo.com/quote/", ticker));
+                Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo("en-US");
+                Thread.Sleep(1000); // TODO: Verificar lógica para abaixar esse valor
 
-            var dividendsText = _tools.GetTextFromWebElement("//*[@id=\"nimbus-app\"]/section/section/section/article/div[2]/ul/li[14]/span[2]");
-            dividendsText = dividendsText.Substring(0, dividendsText.IndexOf("("));
-            asset.Dividend = decimal.TryParse(dividendsText, out var dividend) ? dividend : 0;
-            asset.Price = _tools.GetDecimalValueFromWebElement("//*[@id=\"nimbus-app\"]/section/section/section/article/section[1]/div[2]/div[1]/section/div/section/div[1]/fin-streamer[1]/span");
-            asset.Ticker = ticker;
+                asset.Dividend = GetDividend();
+                asset.Price = _tools.GetDecimalValueFromWebElement("//*[@id=\"nimbus-app\"]/section/section/section/article/section[1]/div[2]/div[1]/section/div/section[1]/div[1]/div[1]/span");
+                asset.Ticker = ticker;
 
-            return asset;
+                return asset;
+            }
+            catch (Exception error)
+            {
+                return new AssetInformation()
+                {
+                    Ticker = "ERRO-" + ticker,
+                    Price = 0,
+                    Dividend = 0
+                };
+            }
+        }
+
+        private decimal GetDividend()
+        {
+            try
+            {
+                int i = 0;
+
+                do
+                {
+                    var dividendElement = _driver.FindElements(By.XPath($"//*[@id=\"nimbus-app\"]/section/section/section/article/div[{i}]/ul/li[14]/span[2]"));
+
+                    if (dividendElement.Any())
+                    {
+                        var dividendText = dividendElement.First().Text;
+                        dividendText = dividendText.Substring(0, dividendText.IndexOf("("));
+                        var dividendValue = decimal.TryParse(dividendText, out var dividend) ? dividend : 0;
+
+                        return dividendValue;
+                    }
+
+                    i++;
+
+                } while (i <= 20);
+
+                return 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

@@ -15,8 +15,13 @@ namespace StockCrawler.Service.Utils
                 var assetColumns = assetElement.FindElements(By.TagName("td"));
 
                 asset.Ticker = assetColumns[0].FindElement(By.TagName("a")).Text;
-                asset.Price = decimal.TryParse(assetColumns[2].Text, out decimal result) ? result : 0;
+                asset.Price = decimal.TryParse(assetColumns[2].Text, out decimal priceResult) ? priceResult : 0;
                 asset.Type = Domain.Type.FII;
+
+                var dividendYieldText = assetColumns[4].Text.Replace("%", "");
+                var dividendNumber = decimal.TryParse(dividendYieldText, out decimal dividendResult) ? dividendResult : 0;
+
+                asset.Dividend = WebScrappingTools.CalculateDividendValueByYield(asset.Price, dividendNumber);
             }
 
             return asset;
@@ -33,6 +38,11 @@ namespace StockCrawler.Service.Utils
                 asset.Ticker = assetColumns[0].FindElement(By.TagName("a")).Text;
                 asset.Price = decimal.TryParse(assetColumns[1].Text, out decimal result) ? result : 0;
                 asset.Type = Domain.Type.Acao;
+
+                var dividendYieldText = assetColumns[5].Text.Replace("%", "");
+                var dividendNumber = decimal.TryParse(dividendYieldText, out decimal dividendResult) ? dividendResult : 0;
+
+                asset.Dividend = WebScrappingTools.CalculateDividendValueByYield(asset.Price, dividendNumber);
             }
 
             return asset;
