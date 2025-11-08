@@ -3,6 +3,7 @@ using OpenQA.Selenium.Chrome;
 using StockCrawler.Domain;
 using StockCrawler.Service.Utils;
 using System.Globalization;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace StockCrawler.Service.StockExtractor
 {
@@ -83,7 +84,7 @@ namespace StockCrawler.Service.StockExtractor
                 Thread.Sleep(1000); // TODO: Verificar lógica para abaixar esse valor
 
                 asset.Dividend = GetDividend();
-                asset.Price = _tools.GetDecimalValueFromWebElement("//*[@id=\"nimbus-app\"]/section/section/section/article/section[1]/div[2]/div[1]/section/div/section[1]/div[1]/div[1]/span");
+                asset.Price = GetPrice();
                 asset.Ticker = ticker;
 
                 return asset;
@@ -106,8 +107,8 @@ namespace StockCrawler.Service.StockExtractor
                 int i = 0;
 
                 do
-                {
-                    var dividendElement = _driver.FindElements(By.XPath($"//*[@id=\"nimbus-app\"]/section/section/section/article/div[{i}]/ul/li[14]/span[2]"));
+                {          
+                    var dividendElement = _driver.FindElements(By.XPath($"//*[@id=\"main-content-wrapper\"]/section[2]/div/div/div/ul/li[14]/span[2]"));
 
                     if (dividendElement.Any())
                     {
@@ -123,6 +124,30 @@ namespace StockCrawler.Service.StockExtractor
                 } while (i <= 20);
 
                 return 0;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private decimal GetPrice()
+        {
+            try
+            {
+                var prices = _driver.FindElements(By.XPath($"//*[@id=\"main-content-wrapper\"]/section[1]/div[2]/div[1]/section/div/section/div[1]/div[1]/span"));
+
+                if (!prices.Any())
+                {
+                    prices = _driver.FindElements(By.XPath($"//*[@id=\"main-content-wrapper\"]/section[2]/div/div/div/ul/li[1]/span[2]/fin-streamer"));
+                }
+
+                if (!prices.Any())
+                {
+                    prices = _driver.FindElements(By.XPath($"//*[@id=\"main-content-wrapper\"]/section[2]/div/div/div/ul/li[2]/span[2]/fin-streamer"));
+                }
+
+                return decimal.TryParse(prices.First().Text, out var decimalValue) ? decimalValue : 0;
             }
             catch (Exception)
             {

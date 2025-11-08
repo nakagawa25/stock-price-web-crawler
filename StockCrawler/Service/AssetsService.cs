@@ -8,6 +8,7 @@ namespace StockCrawler.Service
         private readonly WatchList _watchList;
         private readonly FundamentusCrawler _webCrawler;
         private readonly YahooFinanceCrawler _yahooFinanceCrawler;
+        private readonly DividendHistoryCrawler _dividendHistoryCrawler;
         private readonly StockAnalysis _stockAnalysis;
 
         public AssetsService()
@@ -16,6 +17,7 @@ namespace StockCrawler.Service
             _webCrawler = new FundamentusCrawler();
             _yahooFinanceCrawler = new YahooFinanceCrawler();
             _stockAnalysis = new StockAnalysis();
+            _dividendHistoryCrawler = new DividendHistoryCrawler();
         }
 
         public List<Asset> GetBrazilianWalletAssets()
@@ -55,25 +57,44 @@ namespace StockCrawler.Service
         {
             var assets = new List<AssetInformation>();
 
-            _yahooFinanceCrawler.InitWebDriver();
+            _dividendHistoryCrawler.InitWebDriver();
+
             var stocksList = _watchList.Stocks;
+            stocksList.AddRange(_watchList.ETFs);
+
             foreach (var stock in stocksList)
             {
-                var asset = _yahooFinanceCrawler.GetStockInformation(stock);
+                var asset = _dividendHistoryCrawler.GetStockInformation(stock);
                 assets.Add(asset);
             }
-            _yahooFinanceCrawler.DisposeWebDriver();
-
-            _stockAnalysis.InitWebDriver();
-            var etfList = _watchList.ETFs;
-            foreach (var etf in etfList)
-            {
-                var asset = _stockAnalysis.GetETFInformation(etf);
-                assets.Add(asset);
-            }
-            _stockAnalysis.DisposeWebDriver();
+            _dividendHistoryCrawler.DisposeWebDriver();
 
             return assets;
         }
+
+        //public List<AssetInformation> GetStocksInformation()
+        //{
+        //    var assets = new List<AssetInformation>();
+
+        //    _yahooFinanceCrawler.InitWebDriver();
+        //    var stocksList = _watchList.Stocks;
+        //    foreach (var stock in stocksList)
+        //    {
+        //        var asset = _yahooFinanceCrawler.GetStockInformation(stock);
+        //        assets.Add(asset);
+        //    }
+        //    _yahooFinanceCrawler.DisposeWebDriver();
+
+        //    _stockAnalysis.InitWebDriver();
+        //    var etfList = _watchList.ETFs;
+        //    foreach (var etf in etfList)
+        //    {
+        //        var asset = _stockAnalysis.GetETFInformation(etf);
+        //        assets.Add(asset);
+        //    }
+        //    _stockAnalysis.DisposeWebDriver();
+
+        //    return assets;
+        //}
     }
 }
